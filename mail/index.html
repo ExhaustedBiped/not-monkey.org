@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" >
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>monkeymail</title>
+<link href="../styles/monkey.css" rel="stylesheet">
+<body>
+
+<h4>AUTHENTICATION and CONFIGURATION:</h4>
+
+Go to <a href="http://monkeymail.org">http://monkeymail.org</a>, login, and change your password under Settings -> Password.<p>
+
+You can also control incoming spam filtering levels and actions at Settings -> Spam Settings.<p>
+
+Mail forwarding config is available at Settings -> Mail Forwarding.<p>
+
+<h4>GENERAL (any IMAP client, including iOS and Android apps):</h4>
+
+<pre>
+IMAP: mail.b.hostedemail.com (TLS/SSL, port 993)
+SMTP: mail.b.hostedemail.com (TLS/SSL, port 465)
+Username (incoming and outgoing): USER@monkey.org
+</pre>
+
+<h4>ALPINE (you are so old-skool):</h4>
+
+Quit Alpine and add/modify .pinerc:
+
+<pre>
+	incoming-folders=monkey.org {mail.b.hostedemail.com/user=USER@monkey.org/tls}INBOX
+	smtp-server=mail.b.hostedemail.com/user=USER@monkey.org/tls/secure
+</pre>
+
+Or if you are of the POP persuasion:
+
+<pre>
+	incoming-folders=monkey.org {#move mail.b.hostedemail.com/user=USER@monkey.org/tls/pop3}INBOX ~/mail/inbox
+</pre>
+
+
+If you want to save your (encrypted) IMAP/SMTP password between Alpine sessions:
+
+<pre>
+	touch ~/.pine-passfile
+</pre>
+
+Now start Alpine, browse to the new folder (named monkey.org) and enter your password.
+
+If you change your password after saving it in Alpine, quit and restart after:
+
+<pre>
+	echo > ~/.pine-passfile
+</pre>
+
+<h4>fetchmail (super old-skool, also procmail):</h4>
+Into .fetchmailrc goes:
+<pre>
+# optional (run in background, keep a log)
+#set daemon 600
+#set logfile fetchmail.log
+
+poll mail.b.hostedemail.com proto POP3
+user "USER@monkey.org" pass "PASSWORD"
+ssl
+fetchall	# fetch reguardless of read/unread flags
+no keep		# delete from server after popping
+no rewrite	# leave headers alone
+# uncomment the next line if you want to process mail through procmail
+#mda "/usr/local/bin/procmail -f %F -d %T";
+</pre>
+</body>
+</html>
